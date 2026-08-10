@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HOZHIN | کافه هوژین</title>
+
+<style>
+/* =========================================================
+   HOZHIN CAFE MENU
+   HTML + CSS + JavaScript — All in one file
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+:root{
+    --bg:#0c0a09;
+    --bg2:#15110f;
+    --card:#1b1512;
+    --card2:#211a16;
+    --gold:#c7a15a;
+    --gold-light:#e3c985;
+    --cream:#f4ead7;
+    --text:#f5eee3;
+    --muted:#a99d8d;
+    --border:rgba(199,161,90,.20);
+    --shadow:0 18px 50px rgba(0,0,0,.38);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+        radial-gradient(circle at 50% -10%, rgba(199,161,90,.12), transparent 35%),
+        linear-gradient(180deg,#0c0a09,#100c0a 55%,#0b0908);
+    color:var(--text);
+    font-family:"Vazirmatn",Tahoma,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+button{
+    font-family:inherit;
+}
+
+svg{
+    width:24px;
+    height:24px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+/* =========================
+   PAGE SYSTEM
+   ========================= */
+
+.page{
+    min-height:100vh;
+    display:none;
+    animation:pageIn .55s ease;
+}
+
+.page.active{
+    display:block;
+}
+
+@keyframes pageIn{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+   HOME PAGE
+   ========================= */
+
+.home{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px 18px;
+    position:relative;
+}
+
+.home::before{
+    content:"";
+    position:fixed;
+    width:360px;
+    height:360px;
+    border-radius:50%;
+    background:rgba(199,161,90,.06);
+    filter:blur(70px);
+    top:-140px;
+    left:50%;
+    transform:translateX(-50%);
+    pointer-events:none;
+}
+
+.home-container{
+    width:100%;
+    max-width:520px;
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+/* Logo */
+
+.logo-wrap{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    padding:5px;
+    margin:0 auto 20px;
+    background:linear-gradient(145deg,var(--gold-light),var(--gold),#765522);
+    box-shadow:
+        0 0 0 8px rgba(199,161,90,.05),
+        0 20px 60px rgba(0,0,0,.55);
+}
+
+.logo{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+    display:block;
+    background:#211a16;
+}
+
+/* temporary logo placeholder */
+.logo-placeholder{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:var(--gold-light);
+    background:
+        radial-gradient(circle,#302319,#120e0c);
+}
+
+.logo-placeholder strong{
+    font-family:"Cormorant Garamond",serif;
+    font-size:34px;
+    letter-spacing:4px;
+}
+
+.logo-placeholder span{
+    font-size:10px;
+    letter-spacing:3px;
+    color:var(--muted);
+}
+
+.brand-name{
+    font-family:"Cormorant Garamond",serif;
+    font-size:46px;
+    letter-spacing:8px;
+    color:var(--cream);
+    margin-bottom:5px;
+}
+
+.brand-subtitle{
+    color:var(--gold);
+    font-size:12px;
+    letter-spacing:4px;
+    margin-bottom:28px;
+}
+
+/* Info Box */
+
+.info-box{
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+    border:1px solid var(--border);
+    border-radius:28px;
+    padding:20px 14px;
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(15px);
+}
+
+.info-title{
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:17px;
+}
+
+.info-actions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.info-action{
+    border:1px solid rgba(199,161,90,.15);
+    background:rgba(199,161,90,.045);
+    border-radius:19px;
+    color:var(--cream);
+    padding:15px 7px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.info-action:hover,
+.info-action:active{
+    transform:translateY(-3px);
+    background:rgba(199,161,90,.11);
+    border-color:rgba(199,161,90,.4);
+}
+
+.info-icon{
+    width:48px;
+    height:48px;
+    margin:0 auto 8px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(199,161,90,.09);
+    color:var(--gold-light);
+}
+
+.info-action span{
+    display:block;
+    font-size:12px;
+}
+
+/* Information popup */
+
+.info-popup{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:.4s ease;
+}
+
+.info-popup.show{
+    max-height:120px;
+    opacity:1;
+    margin-top:15px;
+}
+
+.popup-inner{
+    background:#100d0b;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:15px;
+    color:var(--cream);
+    font-size:13px;
+    line-height:2;
+}
+
+.popup-inner a{
+    color:var(--gold-light);
+    text-decoration:none;
+}
+
+/* Menu Button */
+
+.menu-button{
+    width:100%;
+    margin-top:18px;
+    border:none;
+    border-radius:20px;
+    padding:18px;
+    color:#17110b;
+    background:linear-gradient(135deg,#e2c77e,#b88c43);
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.35),
+        inset 0 1px rgba(255,255,255,.4);
+    transition:.3s;
+}
+
+.menu-button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 20px 40px rgba(0,0,0,.45);
+}
+
+.menu-button-content{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.menu-button svg{
+    width:21px;
+}
+
+/* =========================
+   MENU PAGE
+   ========================= */
+
+.menu-page{
+    padding-bottom:50px;
+}
+
+/* Header */
+
+.menu-header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(12,10,9,.90);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(199,161,90,.12);
+}
+
+.menu-header-inner{
+    max-width:760px;
+    margin:auto;
+    padding:13px 15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.back-button{
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.03);
+    color:var(--cream);
+    border-radius:14px;
+    padding:9px 13px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.back-button svg{
+    width:18px;
+}
+
+.header-brand{
+    text-align:center;
+}
+
+.header-brand strong{
+    display:block;
+    font-family:"Cormorant Garamond",serif;
+    font-size:25px;
+    letter-spacing:4px;
+}
+
+.header-brand span{
+    font-size:9px;
+    color:var(--gold);
+    letter-spacing:2px;
+}
+
+.header-logo{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    object-fit:cover;
+}
+
+/* Category navigation */
+
+.category-bar{
+    position:sticky;
+    top:74px;
+    z-index:40;
+    background:rgba(12,10,9,.94);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(199,161,90,.10);
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.category-bar::-webkit-scrollbar{
+    display:none;
+}
+
+.category-list{
+    max-width:900px;
+    margin:auto;
+    padding:11px 14px;
+    display:flex;
+    gap:9px;
+    width:max-content;
+}
+
+.category-button{
+    border:1px solid rgba(199,161,90,.16);
+    background:#17120f;
+    color:#bdb1a0;
+    padding:9px 13px;
+    border-radius:16px;
+    white-space:nowrap;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    transition:.3s;
+    font-size:11px;
+}
+
+.category-button svg{
+    width:18px;
+    height:18px;
+}
+
+.category-button.active{
+    background:linear-gradient(135deg,#d7b96d,#a67b38);
+    color:#1a1209;
+    border-color:transparent;
+    font-weight:800;
+}
+
+/* Menu Content */
+
+.menu-content{
+    width:100%;
+    max-width:760px;
+    margin:auto;
+    padding:28px 15px;
+}
+
+.category-section{
+    margin-bottom:38px;
+    scroll-margin-top:145px;
+}
+
+.category-heading{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:17px;
+}
+
+.category-heading-icon{
+    width:47px;
+    height:47px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--gold-light);
+    background:linear-gradient(145deg,#241b15,#130f0d);
+    border:1px solid var(--border);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+.category-heading-icon svg{
+    width:24px;
+    height:24px;
+}
+
+.category-heading-text h2{
+    font-size:19px;
+    font-weight:700;
+    color:var(--cream);
+}
+
+.category-heading-text p{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+/* Products */
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+}
+
+.product-card{
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
+    border:1px solid rgba(199,161,90,.13);
+    border-radius:21px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,.22);
+    transition:.35s ease;
+    animation:cardIn .55s ease both;
+}
+
+.product-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(199,161,90,.35);
+}
+
+@keyframes cardIn{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.product-image{
+    width:100%;
+    aspect-ratio:1/1;
+    background:
+        radial-gradient(circle at 50% 35%,rgba(199,161,90,.14),transparent 40%),
+        #100d0b;
+    position:relative;
+    overflow:hidden;
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:.5s;
+}
+
+.product-card:hover .product-image img{
+    transform:scale(1.05);
+}
+
+/* Placeholder shown until real photo is added */
+
+.image-placeholder{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:#695b4b;
+}
+
+.image-placeholder svg{
+    width:38px;
+    height:38px;
+    margin-bottom:8px;
+}
+
+.image-placeholder small{
+    font-size:9px;
+}
+
+.product-info{
+    padding:12px;
+}
+
+.product-name{
+    color:var(--cream);
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:6px;
+}
+
+.product-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:5px;
+}
+
+.product-price{
+    color:var(--gold-light);
+    font-size:11px;
+    font-weight:700;
+}
+
+.product-detail{
+    width:29px;
+    height:29px;
+    border-radius:10px;
+    border:1px solid rgba(199,161,90,.18);
+    background:rgba(199,161,90,.05);
+    color:var(--gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+.product-detail svg{
+    width:16px;
+    height:16px;
+}
+
+/* Footer */
+
+.menu-footer{
+    text-align:center;
+    padding:25px 15px;
+    color:#75695b;
+    font-size:10px;
+}
+
+.menu-footer strong{
+    color:var(--gold);
+    letter-spacing:3px;
+    font-family:"Cormorant Garamond",serif;
+    font-size:17px;
+}
+
+/* Product modal */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(7px);
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:600px;
+    background:#17110e;
+    border:1px solid var(--border);
+    border-radius:28px 28px 0 0;
+    padding:22px;
+    animation:modalUp .35s ease;
+}
+
+@keyframes modalUp{
+    from{
+        transform:translateY(100%);
+    }
+    to{
+        transform:translateY(0);
+    }
+}
+
+.modal-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.modal-title{
+    font-size:18px;
+    color:var(--cream);
+}
+
+.close-modal{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:#211812;
+    color:var(--cream);
+    cursor:pointer;
+}
+
+.modal-text{
+    color:var(--muted);
+    font-size:13px;
+    line-height:2;
+}
+
+/* Responsive */
+
+@media(max-width:390px){
+    .products{
+        gap:9px;
+    }
+
+    .product-info{
+        padding:10px;
+    }
+
+    .product-name{
+        font-size:12px;
+    }
+
+    .brand-name{
+        font-size:40px;
+    }
+
+    .logo-wrap{
+        width:135px;
+        height:135px;
+    }
+}
+
+@media(min-width:650px){
+    .products{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     SVG ICON DEFINITIONS
+     ========================================================= -->
+
+<svg style="display:none">
+
+<symbol id="icon-phone" viewBox="0 0 24 24">
+    <path d="M22 16.9v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.9z"/>
+</symbol>
+
+<symbol id="icon-location" viewBox="0 0 24 24">
+    <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+    <circle cx="12" cy="10" r="2.5"/>
+</symbol>
+
+<symbol id="icon-instagram" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="5"/>
+    <circle cx="12" cy="12" r="4"/>
+    <circle cx="17.5" cy="6.5" r="1"/>
+</symbol>
+
+<symbol id="icon-menu" viewBox="0 0 24 24">
+    <path d="M4 6h16M4 12h16M4 18h16"/>
+</symbol>
+
+<symbol id="icon-arrow" viewBox="0 0 24 24">
+    <path d="M15 18l-6-6 6-6"/>
+</symbol>
+
+<symbol id="icon-coffee" viewBox="0 0 24 24">
+    <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Z"/>
+    <path d="M17 10h2a3 3 0 0 1 0 6h-2"/>
+    <path d="M8 4c0 1 1 1 1 2M12 4c0 1 1 1 1 2"/>
+</symbol>
+
+<symbol id="icon-ice" viewBox="0 0 24 24">
+    <path d="M7 5h10l-1 15H8L7 5Z"/>
+    <path d="M9 2h6"/>
+    <path d="M10 9l4 4M14 9l-4 4"/>
+</symbol>
+
+<symbol id="icon-chocolate" viewBox="0 0 24 24">
+    <path d="M6 4h12v16H6z"/>
+    <path d="M6 9h12M6 14h12M12 4v16"/>
+</symbol>
+
+<symbol id="icon-shake" viewBox="0 0 24 24">
+    <path d="M8 8h8l-1 13H9L8 8Z"/>
+    <path d="M7 5h10l-1 3H8L7 5Z"/>
+    <path d="M10 2c0 1 1 1 1 2M14 2c0 1-1 1-1 2"/>
+    <path d="M8 5h8"/>
+</symbol>
+
+<symbol id="icon-cocktail" viewBox="0 0 24 24">
+    <path d="M4 5h16l-8 8-8-8Z"/>
+    <path d="M12 13v7M9 20h6"/>
+    <path d="M17 2l-2 3"/>
+</symbol>
+
+<symbol id="icon-smoothie" viewBox="0 0 24 24">
+    <path d="M7 6h10l-1 15H8L7 6Z"/>
+    <path d="M10 2l4 7"/>
+    <path d="M8 10h8"/>
+</symbol>
+
+<symbol id="icon-fruit" viewBox="0 0 24 24">
+    <path d="M12 20c-5 0-8-4-8-8 0-4 3-7 8-7s8 3 8 7c0 4-3 8-8 8Z"/>
+    <path d="M12 5c0-3 2-4 4-4"/>
+</symbol>
+
+<symbol id="icon-cake" viewBox="0 0 24 24">
+    <path d="M4 12h16v8H4z"/>
+    <path d="M4 12c0-3 3-4 4-1 1-3 4-3 5 0 1-3 4-2 5 1"/>
+    <path d="M8 16h.01M12 16h.01M16 16h.01"/>
+</symbol>
+
+<symbol id="icon-food" viewBox="0 0 24 24">
+    <path d="M4 3v18M7 3v7M10 3v7M7 10v11"/>
+    <path d="M17 3v18M17 3c3 2 3 6 0 8"/>
+</symbol>
+
+<symbol id="icon-hookah" viewBox="0 0 24 24">
+    <path d="M7 20h10M9 20v-4h6v4M12 16V9"/>
+    <path d="M9 9h6"/>
+    <path d="M8 6c0-2 2-3 4-3s4 1 4 3"/>
+    <path d="M16 8c4-1 5 2 4 4"/>
+</symbol>
+
+<symbol id="icon-image" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="3"/>
+    <circle cx="8.5" cy="8.5" r="1.5"/>
+    <path d="M21 15l-5-5L5 21"/>
+</symbol>
+
+<symbol id="icon-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/>
+    <path d="M12 11v5M12 8h.01"/>
+</symbol>
+
+</svg>
+
+
+<!-- =========================================================
+     HOME
+     ========================================================= -->
+
+<section id="homePage" class="page active">
+
+<div class="home">
+
+<div class="home-container">
+
+<div class="logo-wrap">
+
+<!-- جای لوگوی واقعی کافه -->
+<!-- بعداً src را به تصویر واقعی تغییر بده -->
+<div class="logo-placeholder">
+    <strong>H</strong>
+    <span>CAFFEE</span>
+</div>
+
+</div>
+
+<div class="brand-name">HOZHIN</div>
+
+<div class="brand-subtitle">
+    COFFEE • CAFE
+</div>
+
+
+<div class="info-box">
+
+<div class="info-title">
+    برای ارتباط و اطلاعات بیشتر
+</div>
+
+<div class="info-actions">
+
+<button class="info-action" onclick="showInfo('phone')">
+
+<div class="info-icon">
+<svg><use href="#icon-phone"></use></svg>
+</div>
+
+<span>تماس</span>
+
+</button>
+
+
+<button class="info-action" onclick="showInfo('address')">
+
+<div class="info-icon">
+<svg><use href="#icon-location"></use></svg>
+</div>
+
+<span>آدرس کافه</span>
+
+</button>
+
+
+<button class="info-action" onclick="openInstagram()">
+
+<div class="info-icon">
+<svg><use href="#icon-instagram"></use></svg>
+</div>
+
+<span>اینستاگرام</span>
+
+</button>
+
+</div>
+
+
+<div id="infoPopup" class="info-popup">
+
+<div id="popupContent" class="popup-inner"></div>
+
+</div>
+
+</div>
+
+
+<button class="menu-button" onclick="openMenu()">
+
+<div class="menu-button-content">
+
+<svg><use href="#icon-menu"></use></svg>
+
+<span>نمایش منو</span>
+
+</div>
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     MENU
+     ========================================================= -->
+
+<section id="menuPage" class="page menu-page">
+
+<header class="menu-header">
+
+<div class="menu-header-inner">
+
+<button class="back-button" onclick="goHome()">
+<svg><use href="#icon-arrow"></use></svg>
+بازگشت
+</button>
+
+
+<div class="header-brand">
+<strong>HOZHIN</strong>
+<span>CAFFEE MENU</span>
+</div>
+
+
+<div class="logo-placeholder header-logo">
+    <strong style="font-size:15px;">H</strong>
+</div>
+
+</div>
+
+</header>
+
+
+<!-- CATEGORY NAVIGATION -->
+
+<nav class="category-bar">
+
+<div class="category-list" id="categoryList">
+
+<button class="category-button active" data-target="coffee">
+<svg><use href="#icon-coffee"></use></svg>
+قهوه
+</button>
+
+<button class="category-button" data-target="icecoffee">
+<svg><use href="#icon-ice"></use></svg>
+آیس کافی
+</button>
+
+<button class="category-button" data-target="hot">
+<svg><use href="#icon-chocolate"></use></svg>
+نوشیدنی گرم
+</button>
+
+<button class="category-button" data-target="shake">
+<svg><use href="#icon-shake"></use></svg>
+شیک
+</button>
+
+<button class="category-button" data-target="mocktail">
+<svg><use href="#icon-cocktail"></use></svg>
+ماکتیل
+</button>
+
+<button class="category-button" data-target="smoothie">
+<svg><use href="#icon-smoothie"></use></svg>
+اسموتی
+</button>
+
+<button class="category-button" data-target="juice">
+<svg><use href="#icon-fruit"></use></svg>
+آبمیوه
+</button>
+
+<button class="category-button" data-target="dessert">
+<svg><use href="#icon-cake"></use></svg>
+کیک و دسر
+</button>
+
+<button class="category-button" data-target="food">
+<svg><use href="#icon-food"></use></svg>
+فست فود
+</button>
+
+<button class="category-button" data-target="hookah">
+<svg><use href="#icon-hookah"></use></svg>
+قلیان
+</button>
+
+</div>
+
+</nav>
+
+
+<main class="menu-content">
+
+
+<!-- =====================================================
+     1. COFFEE
+     ===================================================== -->
+
+<section class="category-section" id="coffee">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-coffee"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>نوشیدنی گرم بر پایه قهوه</h2>
+<p>COFFEE BASED DRINKS</p>
+</div>
+
+</div>
+
+
+<div class="products">
+
+<script>
+/* محصولات این بخش در JavaScript ساخته می‌شوند */
+</script>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     2. ICE COFFEE
+     ===================================================== -->
+
+<section class="category-section" id="icecoffee">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-ice"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>آیس کافی ها</h2>
+<p>ICE COFFEE</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     3. HOT DRINKS
+     ===================================================== -->
+
+
+<section class="category-section" id="hot">
+
+  <div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-chocolate"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>نوشیدنی گرم</h2>
+<p>HOT DRINKS</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     4. SHAKE
+     ===================================================== -->
+
+<section class="category-section" id="shake">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-shake"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>شیک</h2>
+<p>MILKSHAKE</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     5. MOCKTAIL
+     ===================================================== -->
+
+<section class="category-section" id="mocktail">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-cocktail"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>ماکتیل ها</h2>
+<p>MOCKTAILS</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     6. SMOOTHIE
+     ===================================================== -->
+
+<section class="category-section" id="smoothie">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-smoothie"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>اسموتی ها</h2>
+<p>SMOOTHIES</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     7. JUICE
+     ===================================================== -->
+
+<section class="category-section" id="juice">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-fruit"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>آبمیوه طبیعی</h2>
+<p>FRESH JUICE</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     8. DESSERT
+     ===================================================== -->
+
+<section class="category-section" id="dessert">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-cake"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>کیک و دسر</h2>
+<p>DESSERT</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     9. FAST FOOD
+     ===================================================== -->
+
+<section class="category-section" id="food">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-food"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>فست فود</h2>
+<p>FAST FOOD</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+<!-- =====================================================
+     10. HOOKAH
+     ===================================================== -->
+
+<section class="category-section" id="hookah">
+
+<div class="category-heading">
+
+<div class="category-heading-icon">
+<svg><use href="#icon-hookah"></use></svg>
+</div>
+
+<div class="category-heading-text">
+<h2>قلیان ها</h2>
+<p>HOOKAH</p>
+</div>
+
+</div>
+
+<div class="products"></div>
+
+</section>
+
+
+</main>
+
+
+<footer class="menu-footer">
+
+<strong>HOZHIN</strong>
+
+<br><br>
+
+کافه هوژین • بوکان
+
+</footer>
+
+</section>
+
+
+<!-- =========================================================
+     PRODUCT MODAL
+     ========================================================= -->
+
+<div id="productModal" class="modal" onclick="closeModal(event)">
+
+<div class="modal-box">
+
+<div class="modal-top">
+
+<div id="modalTitle" class="modal-title"></div>
+
+<button class="close-modal" onclick="closeProductModal()">
+×
+</button>
+
+</div>
+
+<div id="modalText" class="modal-text"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   PRODUCT DATA
+   ========================================================= */
+
+const menuData = {
+
+coffee: [
+"اسپرسو دبل",
+"اسپرسو تک",
+"موکا",
+"لانگو",
+"لاته",
+"آمریکانو",
+"ماکیاتو",
+"رومانو",
+"آفوگاتو",
+"ترک",
+"سان رایس",
+"فرانسه",
+"یونانی",
+"کوبانو"
+],
+
+icecoffee: [
+"آیس لاته",
+"آیس آمریکانو",
+"آیس کارامل ماکیاتو",
+"آیس موکا",
+"کلد برو",
+"آیس دمی",
+"آیس تی لیمو",
+"آیس سان رایس"
+],
+
+hot: [
+"هات چاکلت",
+"وایت چاکلت",
+"هات پسته زعفران",
+"پینک چاکلت",
+"نسکافه",
+"کاپوچینو",
+"شیر کاکائو"
+],
+
+shake: [
+"وانیل",
+"شکلات",
+"انبه",
+"لوتوس",
+"نوتلا",
+"اورئو",
+"توت فرنگی",
+"پسته",
+"بادام زمینی",
+"قهوه",
+"نسکافه",
+"بایکیت"
+],
+
+mocktail: [
+"موهیتو",
+"رد موهیتو",
+"بلو موهیتو",
+"لیموناد",
+"پیناکولادا",
+"بلو اسکای"
+],
+
+smoothie: [
+"هندوانه",
+"طالبی",
+"انبه موز",
+"کیوی",
+"توت فرنگی",
+"هندوانه شاتوت"
+],
+
+juice: [
+"شیر موز",
+"شیر انبه",
+"شیر توت فرنگی",
+"آب پرتقال",
+"آب هندوانه",
+"آب سیب",
+"آب هویج",
+"آب طالبی"
+],
+
+dessert: [
+"کیک سه شیر",
+"کیک شکلاتی",
+"تیرامیسو",
+"کوکی"
+],
+
+food: [
+"سیب زمینی ویژه",
+"سیب زمینی",
+"پاستا آلفردو",
+"سالاد سیزار"
+],
+
+hookah: [
+"لیدی کلر",
+"آلو یخ",
+"شب های مسکو",
+"مومینتو",
+"دجله",
+"انگلیسی",
+"دو سیب"
+]
+
+};
+
+
+/* =========================================================
+   IMAGE PATH SYSTEM
+   =========================================================
+
+   بعداً برای هر محصول می‌توانی عکس واقعی را اینجا قرار بدهی.
+
+   مثال:
+
+   "لاته": "images/latte.jpg"
+
+   فعلاً اگر عکس وجود نداشته باشد،
+   جای مخصوص عکس نمایش داده می‌شود.
+*/
+
+const productImages = {
+
+    "لاته":"images/latte.jpg",
+    "نوتلا":"images/nutella-shake.jpg",
+    "آیس لاته":"images/iced-latte.jpg"
+
+};
+
+
+/* =========================================================
+   PRICE SYSTEM
+
+   قیمت‌های واقعی را بعداً اینجا وارد می‌کنیم.
+*/
+
+const productPrices = {
+
+};
+
+
+/* =========================================================
+   CREATE PRODUCT CARDS
+   ========================================================= */
+
+function createProducts(){
+
+    Object.keys(menuData).forEach(category => {
+
+        const section =
+            document.getElementById(category);
+
+        if(!section) return;
+
+        const container =
+            section.querySelector(".products");
+
+        container.innerHTML = "";
+
+        menuData[category].forEach((name,index) => {
+
+            const image =
+                productImages[name] || "";
+
+            const price =
+                productPrices[name] || "قیمت";
+
+            const card =
+                document.createElement("article");
+
+            card.className = "product-card";
+
+            card.style.animationDelay =
+                `${index * 0.035}s`;
+
+            card.innerHTML = `
+
+                <div class="product-image">
+
+                    ${
+                        image
+                        ?
+                        `<img src="${image}"
+                              alt="${name}"
+                              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">`
+                        :
+                        ""
+                    }
+
+                    <div class="image-placeholder"
+                         style="${image ? 'display:none' : 'display:flex'}">
+
+                        <svg>
+                            <use href="#icon-image"></use>
+                        </svg>
+
+                        <small>تصویر محصول</small>
+
+                    </div>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        ${name}
+                    </div>
+
+                    <div class="product-bottom">
+
+                        <div class="product-price">
+                            ${price}
+                        </div>
+
+                        <button
+                            class="product-detail"
+                            onclick="showProduct('${name}')">
+
+                            <svg>
+                                <use href="#icon-info"></use>
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    });
+
+}
+
+
+/* =========================================================
+   HOME INFORMATION
+   ========================================================= */
+
+function showInfo(type){
+
+    const popup =
+        document.getElementById("infoPopup");
+
+    const content =
+        document.getElementById("popupContent");
+
+    if(type === "phone"){
+
+        content.innerHTML = `
+            <strong>شماره تماس کافه</strong><br>
+            <a href="tel:09147852447">
+                09147852447
+            </a>
+        `;
+
+    }
+
+    if(type === "address"){
+
+        content.innerHTML = `
+            <strong>آدرس کافه هوژین</strong><br>
+            بوکان، خیابان ورزش، نبش کوچه اوستا 9، کافه هوژین
+        `;
+
+    }
+
+    popup.classList.toggle("show");
+
+}
+
+
+/* =========================================================
+   INSTAGRAM
+   ========================================================= */
+
+function openInstagram(){
+
+    window.open(
+        "https://instagram.com/Caffee_hozhin",
+        "_blank"
+    );
+
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+   ========================================================= */
+
+function openMenu(){
+
+    document.getElementById("homePage")
+        .classList.remove("active");
+
+    document.getElementById("menuPage")
+        .classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+
+}
+
+
+function goHome(){
+
+    document.getElementById("menuPage")
+        .classList.remove("active");
+
+    document.getElementById("homePage")
+        .classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+
+}
+
+
+/* =========================================================
+   CATEGORY NAVIGATION
+   ========================================================= */
+
+document.querySelectorAll(".category-button")
+.forEach(button => {
+
+    button.addEventListener("click",function(){
+
+        const target =
+            document.getElementById(
+                this.dataset.target
+            );
+
+        if(!target) return;
+
+        document.querySelectorAll(".category-button")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+        this.classList.add("active");
+
+        target.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    });
+
+});
+
+
+/* =========================================================
+   ACTIVE CATEGORY WHILE SCROLLING
+   ========================================================= */
+
+const sections =
+    document.querySelectorAll(".category-section");
+
+const buttons =
+    document.querySelectorAll(".category-button");
+
+const observer =
+    new IntersectionObserver(
+
+        entries => {
+
+            entries.forEach(entry => {
+
+                if(entry.isIntersecting){
+
+                    buttons.forEach(btn =>
+                        btn.classList.remove("active")
+                    );
+
+                    const active =
+                        document.querySelector(
+                            `[data-target="${entry.target.id}"]`
+                        );
+
+                    if(active){
+
+                        active.classList.add("active");
+
+                        active.scrollIntoView({
+                            behavior:"smooth",
+                            block:"nearest",
+                            inline:"center"
+                        });
+
+                    }
+
+                }
+
+            });
+
+        },
+
+        {
+            rootMargin:"-150px 0px -55% 0px"
+        }
+
+    );
+
+
+sections.forEach(section =>
+    observer.observe(section)
+);
+
+
+/* =========================================================
+   PRODUCT MODAL
+   ========================================================= */
+
+function showProduct(name){
+
+    document.getElementById("modalTitle")
+        .textContent = name;
+
+    document.getElementById("modalText")
+        .innerHTML = `
+            اطلاعات و توضیحات <strong>${name}</strong>
+            بعداً از پنل مدیریت قابل تنظیم خواهد بود.
+        `;
+
+    document.getElementById("productModal")
+        .classList.add("show");
+
+}
+
+
+function closeProductModal(){
+
+    document.getElementById("productModal")
+        .classList.remove("show");
+
+}
+
+
+function closeModal(event){
+
+    if(event.target.id === "productModal"){
+
+        closeProductModal();
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+createProducts();
+
+</script>
+
+</body>
+</html>
+
+
+
+
+  
