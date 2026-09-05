@@ -2341,3 +2341,1621 @@ const translations = {
     }
 
 };
+
+/* =========================================================
+   9. HELPERS
+   ========================================================= */
+
+function t(key) {
+
+    return (
+        translations[state.language]?.[key] ||
+        translations.fa[key] ||
+        key
+    );
+
+}
+
+
+function getLocalizedText(value) {
+
+    if (
+        typeof value === "object" &&
+        value !== null
+    ) {
+
+        return (
+            value[state.language] ||
+            value.fa ||
+            value.en ||
+            ""
+        );
+
+    }
+
+    return value || "";
+
+}
+
+
+function formatPrice(price) {
+
+    if (
+        price === null ||
+        price === undefined ||
+        price === ""
+    ) {
+
+        return t("priceNotSet");
+
+    }
+
+    return (
+        new Intl.NumberFormat(
+            state.language === "fa"
+                ? "fa-IR"
+                : "en-US"
+        ).format(price)
+        + (
+            state.language === "fa"
+                ? " تومان"
+                : " Toman"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   10. IMAGE FALLBACK
+   ========================================================= */
+
+function handleImageError(image) {
+
+    image.onerror = null;
+
+    image.src =
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 600 600"
+            >
+                <rect
+                    width="600"
+                    height="600"
+                    fill="#111111"
+                />
+
+                <text
+                    x="50%"
+                    y="48%"
+                    dominant-baseline="middle"
+                    text-anchor="middle"
+                    fill="#c9a45c"
+                    font-size="48"
+                    font-family="Georgia"
+                >
+                    HOZHIN
+                </text>
+
+                <text
+                    x="50%"
+                    y="56%"
+                    dominant-baseline="middle"
+                    text-anchor="middle"
+                    fill="#77736c"
+                    font-size="20"
+                    font-family="Arial"
+                    letter-spacing="5"
+                >
+                    CAFE
+                </text>
+            </svg>
+        `);
+
+}
+
+
+/* =========================================================
+   11. SAVE STATE
+   ========================================================= */
+
+function saveState() {
+
+    localStorage.setItem(
+        "hozhin-language",
+        state.language
+    );
+
+    localStorage.setItem(
+        "hozhin-theme",
+        state.theme
+    );
+
+    localStorage.setItem(
+        "hozhin-cart",
+        JSON.stringify(state.cart)
+    );
+
+}
+
+
+/* =========================================================
+   12. RENDER CATEGORIES
+   ========================================================= */
+
+function renderCategories() {
+
+    if (!elements.categoryList) {
+        return;
+    }
+
+    elements.categoryList.innerHTML = "";
+
+    categories.forEach(category => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "category-button";
+
+        if (
+            category.id ===
+            state.currentCategory
+        ) {
+
+            button.classList.add("active");
+
+        }
+
+        button.textContent =
+            getLocalizedText(category.name);
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                state.currentCategory =
+                    category.id;
+
+                renderCategories();
+
+                renderProducts();
+
+            }
+        );
+
+        elements.categoryList.appendChild(button);
+
+    });
+
+    }
+
+/* =========================================================
+   13. RENDER PRODUCTS
+   ========================================================= */
+
+function renderProducts() {
+
+    if (!elements.productsGrid) {
+        return;
+    }
+
+    elements.productsGrid.innerHTML = "";
+
+    const categoryProducts =
+        products
+            .filter(product =>
+                product.category ===
+                state.currentCategory
+            )
+            .sort(
+                (a, b) =>
+                    a.sortOrder -
+                    b.sortOrder
+            );
+
+
+    if (categoryProducts.length === 0) {
+
+        elements.productsGrid.innerHTML = `
+            <div class="cart-empty">
+                ${t("emptyCart")}
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    categoryProducts.forEach(product => {
+
+        const card =
+            document.createElement("article");
+
+        card.className =
+            "product-card";
+
+
+        if (!product.available) {
+
+            card.style.opacity = "0.55";
+
+        }
+
+
+        const price =
+            formatPrice(product.price);
+
+
+        card.innerHTML = `
+
+            <div class="product-card-image">
+
+                <img
+                    src="${product.image}"
+                    alt="${getLocalizedText(product.name)}"
+                    loading="lazy"
+                >
+
+            </div>
+
+            <div class="product-card-content">
+
+                <div class="product-card-name">
+                    ${getLocalizedText(product.name)}
+                </div>
+
+                ${
+                    product.available
+                        ? `
+                            <div class="product-card-price">
+                                ${price}
+                            </div>
+                        `
+                        : `
+                            <div class="product-card-unavailable">
+                                ${t("unavailable")}
+                            </div>
+                        `
+                }
+
+            </div>
+
+        `;
+
+
+        const image =
+            card.querySelector("img");
+
+        if (image) {
+
+            image.addEventListener(
+                "error",
+                () => handleImageError(image)
+            );
+
+        }
+
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                if (!product.available) {
+
+                    showToast(
+                        t("unavailable")
+                    );
+
+                    return;
+
+                }
+
+                openProductModal(product);
+
+            }
+        );
+
+
+        elements.productsGrid.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================================
+   14. OPEN PRODUCT MODAL
+   ========================================================= */
+
+function openProductModal(product) {
+
+    state.selectedProduct = product;
+
+    state.quantity = 1;
+
+    elements.productDetailImage.src =
+        product.image;
+
+    elements.productDetailImage.alt =
+        getLocalizedText(product.name);
+
+    elements.productDetailCategory.textContent =
+        getCategoryName(product.category);
+
+    elements.productDetailName.textContent =
+        getLocalizedText(product.name);
+
+    elements.productDetailDescription.textContent =
+        getLocalizedText(product.description);
+
+    elements.productDetailPrice.textContent =
+        formatPrice(product.price);
+
+    elements.quantityValue.textContent =
+        state.quantity;
+
+    elements.productModal.classList.add("active");
+
+    elements.productModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    elements.productDetailImage.onerror =
+        () => {
+
+            handleImageError(
+                elements.productDetailImage
+            );
+
+        };
+
+}
+
+
+/* =========================================================
+   15. CLOSE PRODUCT MODAL
+   ========================================================= */
+
+function closeProductModal() {
+
+    elements.productModal.classList.remove(
+        "active"
+    );
+
+    elements.productModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    state.selectedProduct = null;
+
+}
+
+
+/* =========================================================
+   16. CATEGORY NAME
+   ========================================================= */
+
+function getCategoryName(categoryId) {
+
+    const category =
+        categories.find(
+            item =>
+                item.id === categoryId
+        );
+
+    if (!category) {
+        return "";
+    }
+
+    return getLocalizedText(
+        category.name
+    );
+
+}
+
+
+/* =========================================================
+   17. QUANTITY
+   ========================================================= */
+
+function increaseQuantity() {
+
+    state.quantity++;
+
+    elements.quantityValue.textContent =
+        state.quantity;
+
+}
+
+
+function decreaseQuantity() {
+
+    if (state.quantity <= 1) {
+        return;
+    }
+
+    state.quantity--;
+
+    elements.quantityValue.textContent =
+        state.quantity;
+
+}
+
+
+/* =========================================================
+   18. ADD TO CART
+   ========================================================= */
+
+function addToCart() {
+
+    const product =
+        state.selectedProduct;
+
+    if (!product) {
+        return;
+    }
+
+
+    const existingItem =
+        state.cart.find(
+            item =>
+                item.productId ===
+                product.id
+        );
+
+
+    if (existingItem) {
+
+        existingItem.quantity +=
+            state.quantity;
+
+    } else {
+
+        state.cart.push({
+
+            productId:
+                product.id,
+
+            quantity:
+                state.quantity
+
+        });
+
+    }
+
+
+    saveState();
+
+    updateCartCount();
+
+    closeProductModal();
+
+    showToast(
+        t("orderAdded")
+    );
+
+}
+
+
+/* =========================================================
+   19. CART PRODUCTS
+   ========================================================= */
+
+function getCartDetailedItems() {
+
+    return state.cart
+        .map(item => {
+
+            const product =
+                products.find(
+                    product =>
+                        product.id ===
+                        item.productId
+                );
+
+            if (!product) {
+                return null;
+            }
+
+            return {
+
+                ...item,
+
+                product
+
+            };
+
+        })
+        .filter(Boolean);
+
+}
+
+
+/* =========================================================
+   20. CART COUNT
+   ========================================================= */
+
+function updateCartCount() {
+
+    const count =
+        state.cart.reduce(
+            (total, item) =>
+                total + item.quantity,
+            0
+        );
+
+    elements.cartCount.textContent =
+        count;
+
+}
+
+
+/* =========================================================
+   21. CART TOTAL
+   ========================================================= */
+
+function calculateCartTotal() {
+
+    return getCartDetailedItems()
+        .reduce(
+            (total, item) => {
+
+                if (
+                    typeof item.product.price !==
+                    "number"
+                ) {
+
+                    return total;
+
+                }
+
+                return (
+                    total +
+                    item.product.price *
+                    item.quantity
+                );
+
+            },
+            0
+        );
+
+               }
+
+
+/* =========================================================
+   22. RENDER CART
+   ========================================================= */
+
+function renderCart() {
+
+    if (!elements.cartItems) {
+        return;
+    }
+
+    const items =
+        getCartDetailedItems();
+
+
+    if (items.length === 0) {
+
+        elements.cartItems.innerHTML = `
+            <div class="cart-empty">
+                ${t("emptyCart")}
+            </div>
+        `;
+
+    } else {
+
+        elements.cartItems.innerHTML = "";
+
+
+        items.forEach(item => {
+
+            const product =
+                item.product;
+
+
+            const cartItem =
+                document.createElement("div");
+
+            cartItem.className =
+                "cart-item";
+
+
+            cartItem.innerHTML = `
+
+                <div class="cart-item-image">
+
+                    <img
+                        src="${product.image}"
+                        alt="${getLocalizedText(product.name)}"
+                    >
+
+                </div>
+
+
+                <div class="cart-item-info">
+
+                    <div class="cart-item-name">
+                        ${getLocalizedText(product.name)}
+                    </div>
+
+                    <div class="cart-item-price">
+                        ${formatPrice(product.price)}
+                    </div>
+
+                </div>
+
+
+                <div class="cart-item-controls">
+
+                    <button
+                        type="button"
+                        data-action="minus"
+                    >
+                        −
+                    </button>
+
+                    <span>
+                        ${item.quantity}
+                    </span>
+
+                    <button
+                        type="button"
+                        data-action="plus"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            `;
+
+
+            const image =
+                cartItem.querySelector("img");
+
+            if (image) {
+
+                image.addEventListener(
+                    "error",
+                    () => handleImageError(image)
+                );
+
+            }
+
+
+            const minusButton =
+                cartItem.querySelector(
+                    '[data-action="minus"]'
+                );
+
+            const plusButton =
+                cartItem.querySelector(
+                    '[data-action="plus"]'
+                );
+
+
+            minusButton.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    changeCartQuantity(
+                        product.id,
+                        -1
+                    );
+
+                }
+            );
+
+
+            plusButton.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    changeCartQuantity(
+                        product.id,
+                        1
+                    );
+
+                }
+            );
+
+
+            elements.cartItems.appendChild(
+                cartItem
+            );
+
+        });
+
+    }
+
+
+    elements.cartTotal.textContent =
+        formatPrice(
+            calculateCartTotal()
+        );
+
+}
+
+
+/* =========================================================
+   23. CHANGE CART QUANTITY
+   ========================================================= */
+
+function changeCartQuantity(
+    productId,
+    amount
+) {
+
+    const item =
+        state.cart.find(
+            cartItem =>
+                cartItem.productId ===
+                productId
+        );
+
+
+    if (!item) {
+        return;
+    }
+
+
+    item.quantity += amount;
+
+
+    if (item.quantity <= 0) {
+
+        state.cart =
+            state.cart.filter(
+                cartItem =>
+                    cartItem.productId !==
+                    productId
+            );
+
+    }
+
+
+    saveState();
+
+    updateCartCount();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   24. OPEN CART
+   ========================================================= */
+
+function openCart() {
+
+    renderCart();
+
+    elements.cartModal.classList.add(
+        "active"
+    );
+
+    elements.cartModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+/* =========================================================
+   25. CLOSE CART
+   ========================================================= */
+
+function closeCart() {
+
+    elements.cartModal.classList.remove(
+        "active"
+    );
+
+    elements.cartModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   26. CLEAR CART
+   ========================================================= */
+
+function clearCart() {
+
+    state.cart = [];
+
+    saveState();
+
+    updateCartCount();
+
+    renderCart();
+
+    showToast(
+        t("orderCleared")
+    );
+
+}
+
+
+/* =========================================================
+   27. SUBMIT ORDER
+   ========================================================= */
+
+function submitOrder() {
+
+    if (state.cart.length === 0) {
+
+        showToast(
+            t("emptyCart")
+        );
+
+        return;
+
+    }
+
+
+    const orderId =
+        "HZ-" +
+        Date.now()
+            .toString()
+            .slice(-6);
+
+
+    const order = {
+
+        id: orderId,
+
+        createdAt:
+            new Date().toISOString(),
+
+        items:
+            getCartDetailedItems()
+                .map(item => ({
+
+                    productId:
+                        item.product.id,
+
+                    name:
+                        getLocalizedText(
+                            item.product.name
+                        ),
+
+                    quantity:
+                        item.quantity,
+
+                    price:
+                        item.product.price
+
+                })),
+
+        total:
+            calculateCartTotal()
+
+    };
+
+
+    /*
+       فعلاً سفارش در مرورگر ذخیره می‌شود.
+
+       بعداً این قسمت با Firebase
+       جایگزین می‌شود.
+    */
+
+    const localOrders =
+        JSON.parse(
+            localStorage.getItem(
+                "hozhin-orders"
+            ) || "[]"
+        );
+
+
+    localOrders.push(order);
+
+
+    localStorage.setItem(
+        "hozhin-orders",
+        JSON.stringify(localOrders)
+    );
+
+
+    elements.orderResult.innerHTML = `
+        <strong>
+            ${t("orderSubmitted")}
+        </strong>
+        <br>
+        ${orderId}
+    `;
+
+
+    state.cart = [];
+
+    saveState();
+
+    updateCartCount();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   28. SHOW TOAST
+   ========================================================= */
+
+let toastTimer = null;
+
+
+function showToast(message) {
+
+    if (!elements.toast) {
+        return;
+    }
+
+    elements.toast.textContent =
+        message;
+
+    elements.toast.classList.add(
+        "active"
+    );
+
+
+    clearTimeout(toastTimer);
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                elements.toast.classList.remove(
+                    "active"
+                );
+
+            },
+            2200
+        );
+
+}
+
+
+/* =========================================================
+   29. OPEN MENU PAGE
+   ========================================================= */
+
+function showMenuPage() {
+
+    state.currentPage = "menu";
+
+    elements.homePage.classList.remove(
+        "active"
+    );
+
+    elements.menuPage.classList.add(
+        "active"
+    );
+
+    renderCategories();
+
+    renderProducts();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+                       }
+
+
+/* =========================================================
+   30. SHOW HOME PAGE
+   ========================================================= */
+
+function showHomePage() {
+
+    state.currentPage = "home";
+
+    elements.menuPage.classList.remove(
+        "active"
+    );
+
+    elements.homePage.classList.add(
+        "active"
+    );
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =========================================================
+   31. SIDE MENU
+   ========================================================= */
+
+function openSideMenu() {
+
+    elements.sideMenu.classList.add(
+        "active"
+    );
+
+    elements.sideMenuOverlay.classList.add(
+        "active"
+    );
+
+    elements.sideMenu.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function closeSideMenu() {
+
+    elements.sideMenu.classList.remove(
+        "active"
+    );
+
+    elements.sideMenuOverlay.classList.remove(
+        "active"
+    );
+
+    elements.sideMenu.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   32. LANGUAGE
+   ========================================================= */
+
+function toggleLanguage() {
+
+    state.language =
+        state.language === "fa"
+            ? "en"
+            : "fa";
+
+
+    document.documentElement.lang =
+        state.language;
+
+
+    document.documentElement.dir =
+        state.language === "fa"
+            ? "rtl"
+            : "ltr";
+
+
+    saveState();
+
+    updateInterface();
+
+}
+
+
+/* =========================================================
+   33. THEME
+   ========================================================= */
+
+function toggleTheme() {
+
+    state.theme =
+        state.theme === "dark"
+            ? "dark-gold"
+            : "dark";
+
+
+    document.body.dataset.theme =
+        state.theme;
+
+    saveState();
+
+}
+
+
+/* =========================================================
+   34. UPDATE INTERFACE
+   ========================================================= */
+
+function updateInterface() {
+
+    elements.languageLabel.textContent =
+        state.language === "fa"
+            ? t("persian")
+            : t("english");
+
+
+    elements.showMenuButton.textContent =
+        t("showMenu");
+
+
+    document.getElementById(
+        "menuTitle"
+    ).textContent =
+        t("menuTitle");
+
+
+    document.getElementById(
+        "menuSubtitle"
+    ).textContent =
+        t("menuSubtitle");
+
+
+    document.getElementById(
+        "cartTitle"
+    ).textContent =
+        t("order");
+
+
+    document.getElementById(
+        "cartTotalLabel"
+    ).textContent =
+        t("total");
+
+
+    document.getElementById(
+        "submitOrderButton"
+    ).textContent =
+        t("submitOrder");
+
+
+    document.getElementById(
+        "clearCartButton"
+    ).textContent =
+        t("clearOrder");
+
+
+    document.getElementById(
+        "cartNotice"
+    ).textContent =
+        t("orderNotice");
+
+
+    renderCategories();
+
+    renderProducts();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   35. INFORMATION POPUP DATA
+   ========================================================= */
+
+const informationData = {
+
+    phone: {
+
+        icon: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path d="M6.6 3.5 9.2 3c.7-.1 1.3.3 1.5 1l1 3c.2.5 0 1.1-.4 1.4l-1.8 1.2c1 2.1 2.7 3.8 4.8 4.8l1.2-1.8c.3-.4.9-.6 1.4-.4l3 1c.7.2 1.1.8 1 1.5l-.5 2.6c-.1.7-.7 1.2-1.4 1.2C11.3 18.5 5.5 12.7 4.9 6.1c-.1-.7.4-1.3 1.1-1.4Z"/>
+            </svg>
+        `,
+
+        value:
+            cafeConfig.phone,
+
+        action:
+            `tel:${cafeConfig.phone}`,
+
+        actionText: {
+            fa: "تماس",
+            en: "Call"
+        }
+
+    },
+
+
+    address: {
+
+        icon: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/>
+                <circle
+                    cx="12"
+                    cy="9"
+                    r="2.3"
+                />
+            </svg>
+        `,
+
+        value:
+            cafeConfig.address,
+
+        action:
+            "https://www.google.com/maps/search/?api=1&query=Hozhin%20Cafe%20Bukan%20Varzesh%20Street%20Osta%209",
+
+        actionText: {
+            fa: "مشاهده روی نقشه",
+            en: "Open Map"
+        }
+
+    },
+
+
+    instagram: {
+
+        icon: `
+            <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <rect
+                    x="3"
+                    y="3"
+                    width="18"
+                    height="18"
+                    rx="5"
+                />
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="4"
+                />
+
+                <circle
+                    cx="17.5"
+                    cy="6.5"
+                    r="1"
+                />
+            </svg>
+        `,
+
+        value:
+            cafeConfig.instagram,
+
+        action:
+            cafeConfig.instagramUrl,
+
+        actionText: {
+            fa: "مشاهده اینستاگرام",
+            en: "Open Instagram"
+        }
+
+    }
+
+};
+
+
+/* =========================================================
+   36. INFORMATION POPUP
+   ========================================================= */
+
+function openInformationPopup(type) {
+
+    const data =
+        informationData[type];
+
+    if (!data) {
+        return;
+    }
+
+
+    elements.informationPopupIcon.innerHTML =
+        data.icon;
+
+
+    elements.informationPopupLabel.textContent =
+        t(type);
+
+
+    elements.informationPopupValue.textContent =
+        getLocalizedText(data.value);
+
+
+    elements.informationPopupAction.href =
+        data.action;
+
+
+    elements.informationPopupAction.textContent =
+        getLocalizedText(
+            data.actionText
+        );
+
+
+    if (type === "instagram") {
+
+        elements.informationPopupAction.target =
+            "_blank";
+
+        elements.informationPopupAction.rel =
+            "noopener noreferrer";
+
+    } else if (type === "address") {
+
+        elements.informationPopupAction.target =
+            "_blank";
+
+        elements.informationPopupAction.rel =
+            "noopener noreferrer";
+
+    } else {
+
+        elements.informationPopupAction.removeAttribute(
+            "target"
+        );
+
+        elements.informationPopupAction.removeAttribute(
+            "rel"
+        );
+
+    }
+
+
+    elements.informationPopup.classList.add(
+        "active"
+    );
+
+    elements.informationPopup.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function closeInformationPopup() {
+
+    elements.informationPopup.classList.remove(
+        "active"
+    );
+
+    elements.informationPopup.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   37. EVENT LISTENERS
+   ========================================================= */
+
+
+/* SHOW MENU */
+
+elements.showMenuButton.addEventListener(
+    "click",
+    showMenuPage
+);
+
+
+/* HAMBURGER */
+
+elements.menuButton.addEventListener(
+    "click",
+    openSideMenu
+);
+
+
+/* CLOSE SIDE MENU */
+
+elements.closeSideMenu.addEventListener(
+    "click",
+    closeSideMenu
+);
+
+
+/* SIDE MENU OVERLAY */
+
+elements.sideMenuOverlay.addEventListener(
+    "click",
+    closeSideMenu
+);
+
+
+/* LANGUAGE */
+
+elements.languageButton.addEventListener(
+    "click",
+    toggleLanguage
+);
+
+
+/* THEME */
+
+elements.themeButton.addEventListener(
+    "click",
+    toggleTheme
+);
+
+
+/* CART */
+
+elements.cartButton.addEventListener(
+    "click",
+    openCart
+);
+
+
+/* CLOSE CART */
+
+elements.cartModalClose.addEventListener(
+    "click",
+    closeCart
+);
+
+
+/* PRODUCT CLOSE */
+
+elements.productModalClose.addEventListener(
+    "click",
+    closeProductModal
+);
+
+
+/* QUANTITY + */
+
+elements.quantityPlus.addEventListener(
+    "click",
+    increaseQuantity
+);
+
+
+/* QUANTITY - */
+
+elements.quantityMinus.addEventListener(
+    "click",
+    decreaseQuantity
+);
+
+
+/* ADD TO CART */
+
+elements.addToCartButton.addEventListener(
+    "click",
+    addToCart
+);
+
+
+/* CLEAR CART */
+
+elements.clearCartButton.addEventListener(
+    "click",
+    clearCart
+);
+
+
+/* SUBMIT ORDER */
+
+elements.submitOrderButton.addEventListener(
+    "click",
+    submitOrder
+);
+
+
+/* INFORMATION ICONS */
+
+document
+    .querySelectorAll(
+        ".information-icon-button"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openInformationPopup(
+                    button.dataset.info
+                );
+
+            }
+        );
+
+    });
+
+
+/* INFORMATION CLOSE */
+
+elements.informationPopupClose.addEventListener(
+    "click",
+    closeInformationPopup
+);
+
+
+/* INFORMATION OUTSIDE */
+
+elements.informationPopup.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            elements.informationPopup
+        ) {
+
+            closeInformationPopup();
+
+        }
+
+    }
+);
+
+
+/* ESCAPE */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        closeInformationPopup();
+
+        closeProductModal();
+
+        closeCart();
+
+        closeSideMenu();
+
+    }
+);
+
+
+/* =========================================================
+   38. INITIALIZATION
+   ========================================================= */
+
+function initializeApp() {
+
+    document.documentElement.lang =
+        state.language;
+
+    document.documentElement.dir =
+        state.language === "fa"
+            ? "rtl"
+            : "ltr";
+
+
+    document.body.dataset.theme =
+        state.theme;
+
+
+    updateCartCount();
+
+    updateInterface();
+
+}
+
+
+initializeApp();
+
